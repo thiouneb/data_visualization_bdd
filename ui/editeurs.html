@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Application de visulisation de données</title>
+    <link rel="stylesheet" href="css/style.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="js/d3.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <style>
+        .publisherCount{
+                float: right;
+                background-color: #0f0093;
+                text-align: right;
+                color: whitesmoke;
+                font-size: small;
+            }
+            .publisherID{
+                height: 1.1em;
+                display: table;
+                width: 400px;
+            }
+            .publisher{
+                font-size: small;
+                display: table-cell;
+            }
+    </style>
+  </head>
+  <body>
+    <header>
+        <nav class="navbar entete">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Zoom sur vos jeux vidéos préférés !</a>
+                </div>
+                <ul id="menu" class="nav navbar-nav navbar-center"></ul>
+            </div>
+        </nav>
+    </header>
+
+    <section id="content" class="container">
+         <!--Menu-->
+         <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="jeux.html">Jeux</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="editeurs.html">Editeurs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="plateformes.html">Plateformes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="years.html">Histogramme</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="model.html">Modèle Lexico-graphique</a>
+            </li>
+          </ul>
+          <!---->
+    
+            <p>
+                Sur cette page, on peut observer la liste des éditeurs de jeux. Pour chaque éditeur, vous trouverez une information sur le nombre
+                de publications à son actif.
+            </p>
+            
+            <div class="row" id="d3-content">
+                <p><button onclick="sortByCount()">Trie selon le nombre</button></p>
+                <div class="row well">
+            
+                    <div id="contentWrite" style="float:clear"></div>
+    
+                </div>
+            </div>
+    </section>
+    
+    <footer></footer>
+
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://d3js.org/d3.v5.js"></script>
+
+        <script>
+
+            let publishers;
+            let sortCount = "down";
+            
+            // Fonction de trie par nombre
+            function sortByCount() {
+                if (sortCount == "down") {
+                    publishers.sort((a, b) => d3.ascending(a.count, b.count));
+                    sortCount = "up";
+                } else {
+                    publishers.sort((a, b) => d3.descending(a.count, b.count));
+                    sortCount = "down";
+                }
+
+                d3
+                        .select("#contentWrite")
+                        .selectAll("div")
+                        .data(publishers, d => d.publisher)
+                        .order()
+            }
+
+            // Draw function
+            function drawPublishers(root) {
+                //console.log(root.data.publishers)
+                publishers = root.data.publishers
+
+                d3
+                        .select("#contentWrite")
+                        .selectAll("div")
+                        .data(publishers)
+                        .join("div")
+                        .attr("class", "publisherID")
+                        .append("div")
+                        .attr("class", "publisher")
+                        .text(d => d.publisher)//.substring(0, 20))
+
+                d3.selectAll(".publisherID")
+                        .append("div")
+                        .attr("class", "publisherCount")
+                        .style("width", d => Math.log(d.count+5) + "em")
+                        .text(d => d.count)
+
+            }
+
+            d3.json("http://127.0.0.1:4000/?query={publishers{publisher count}}").then(drawPublishers)
+      
+        </script>
+
+
+  </body>
+</html>

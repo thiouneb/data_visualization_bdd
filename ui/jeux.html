@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Application de visulisation de données</title>
+        <link rel="stylesheet" href="css/style.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="js/d3.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    </head>
+
+    <body>
+        <header>
+            <nav class="navbar entete">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Zoom sur vos jeux vidéos préférés !</a>
+                    </div>
+                    <ul id="menu" class="nav navbar-nav navbar-center"></ul>
+                </div>
+            </nav>
+        </header>
+
+        <section id="content" class="container">
+            <!--Menu-->
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="jeux.html">Jeux</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="editeurs.html">Editeurs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="plateformes.html">Plateformes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="years.html">Histogramme</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="model.html">Modèle Lexico-graphique</a>
+                </li>
+              </ul>
+              <!---->
+
+              <p>
+                Sur cette page, on peut observer la liste des jeux qui composent notre base de données.
+                On pourra voire pour chaque jeu le nom, la plateforme pour laquelle le jeu a été publié, l'année de publication,
+                le genre, l'éditeur ou encore le bénéfice généré à la vente en millions d'euros.
+            </p>
+
+              <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Plateforme</th>
+                        <th scope="col">Année de publication</th>
+                        <th scope="col">Genre</th>
+                        <th scope="col">Editeur</th>
+                        <th scope="col">Ventes globales(en millions)</th>
+                    </tr>
+                </thead>
+
+                <tbody id="table-content">
+
+                </tbody>
+            </table>
+
+            <div id="content" style="float:clear"></div>
+		Chargement des données...
+             <div id="nconf"></div>
+        <footer></footer>
+
+
+        <script type = "text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://d3js.org/d3.v5.js"></script>
+
+        <script>
+            let donnees
+            let sortCount = "down";
+
+            // Fonction de trie par nombre
+            function sortByCount() {
+                if (sortCount == "down") {
+                    donnees.sort((a, b) => d3.ascending(a.Global_Sales, b.Global_Sales));
+                    sortCount = "up";
+                } else {
+                    donnees.sort((a, b) => d3.descending(a.Global_Sales, b.Global_Sales));
+                    sortCount = "down";
+                }
+
+                d3
+                        .select("#publisherID")
+                        .selectAll("td")
+                        .data(donnees, d => d.Name)
+                        .order()
+            }
+
+            // Draw function
+            function drawDonnees(root) {
+                donnees = root.data.donnees;
+
+                d3
+                        .select("tbody")
+                        .selectAll("div")
+                        .data(donnees)
+                        .join("tr")
+                        .attr("class", "publisherID")
+                        .append("td")
+                        .attr("class", "publisher")
+                        .text(d => d.Name)//.substring(0, 20))
+
+                d3.selectAll(".publisherID")
+                        .append("td")
+                        .attr("class", "publisherCount")
+                        .text(d => d.Platform)
+                d3.selectAll(".publisherID")
+                        .append("td")
+                        .attr("class", "publisherCount")
+                        .text(d => d.Year)
+                d3.selectAll(".publisherID")
+                        .append("td")
+                        .attr("class", "publisherCount")
+                        .text(d => d.Genre)
+                d3.selectAll(".publisherID")
+                        .append("td")
+                        .attr("class", "publisherCount")
+                        .text(d => d.Publisher)
+                d3.selectAll(".publisherID")
+                        .append("td")
+                        .attr("class", "publisherCount")
+                        .text(d => d.Global_Sales)
+
+            }
+
+
+          d3.json("http://127.0.0.1:4000/?query={donnees{Name Platform Year Genre Publisher Global_Sales}}").then(drawDonnees)
+
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,32 @@
+scalar JSON
+
+type Publisher{
+    publisher: String
+    count: Int
+}
+
+type Plateform{
+    plateform: String
+    count: Int
+}
+
+type Donnees{
+    Name: String
+    Platform: String
+    Year: String
+    Genre: String
+    Publisher: String
+    Global_Sales: String
+}
+
+type Year {
+    year: String
+    count: Int
+}
+
+type Query {
+    publishers : [Publisher]
+    plateforms : [Plateform]
+    donnees : [Donnees]
+    years : [Year]
+}

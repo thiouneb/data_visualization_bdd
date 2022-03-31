@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Application de visulisation de données</title>
+    <link rel="stylesheet" href="css/style.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <style>
+      #link { color: #FF0000; } /* CSS link color */
+      #col {color : blue; } /* CSS imporant words color */
+    </style>
+  </head>
+  <body>
+    <header>
+        <nav class="navbar entete">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Zoom sur vos jeux vidéos préférés !</a>
+                </div>
+                <ul id="menu" class="nav navbar-nav navbar-center"></ul>
+            </div>
+        </nav>
+    </header>
+
+    <section id="content" class="container">
+            <!--Menu-->
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="jeux.html">Jeux</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="editeurs.html">Editeurs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="plateformes.html">Plateformes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="years.html">Histogramme</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="model.html">Modèle Lexico-graphique</a>
+                </li>
+            </ul>
+            <!---->
+            <div class="main-content">
+            
+              <div class="row" id="d3-content">
+                <h2 class="row">Visualisation de données</h2>
+                <div class="row well">
+                  <p>
+                    Dans cette page Web, nous allons exploité une base de données contenant une liste de jeux vidéos vendus à plus de 100.000 exemplaires.
+                    Le jeu de données a été généré par un scrap de <a href="http://www.vgchartz.com/" id="link" target="_blank">vgchartz</a> et on l'a directement obtenu
+                    via la plateforme web <a href="https://www.kaggle.com/gregorut/videogamesales" id="link" target="_blank">Kaggle</a>.
+                </p>
+                <p>
+                    La base de données au format <span id="col">JSON</span> est exactement composé de <span id="col">16.598</span> enregistrements et dont les champs incluent :
+                    <ul>
+                        <li>
+                            <span id="col">"Rang" :</span> Classement des ventes globales.
+                        </li>
+                        <li>
+                            <span id="col">"Nom" :</span> Le nom du jeu.
+                        </li>
+                        <li>
+                            <span id="col">"Plate-forme" :</span> Plate-forme de la sortie des jeux. Exemple : PC, PS4, Xbox, etc.
+                        </li>
+                        <li>
+                            <span id="col">"Année" :</span> Année de sortie du jeu.
+                        </li>
+                        <li>
+                            <span id="col">"Genre" :</span> Genre du jeu.
+                        </li>
+                        <li>
+                            <span id="col">"Editeur" :</span> Editeur du jeu.
+                        </li>
+                        <li>
+                            <span id="col">"NA_Sales" :</span> Vente en Amérique du Nord (en millions).
+                        </li>
+                        <li>
+                            <span id="col">"EU_Sales" :</span> Ventes en Europe (en millions).
+                        </li>
+                        <li>
+                            <span id="col">"JP_Sales" :</span> Vente au Japon (en millions).
+                        </li>
+                        <li>
+                            <span id="col">"Other_Sales" :</span> Vente dans le reste du monde (en millions).
+                        </li>
+                        <li>
+                            <span id="col">"Global_Sales" :</span> Total des ventes mondial.
+                        </li>
+                    </ul>
+                </p>
+
+                    Durant ce projet nous avons utilisé :
+                    <ul>
+                      <li>Node.js :</li>
+                      <ul>
+                        <li>Le module Mongodb pour la création de la bases de données a partir d'un fichier JSON</li>
+                        <li>Le module Express pour la création du serveur et pour gérer les différentes routes</li>
+                        <li>GraphQL pour les requêtes de récupération des données depuis Mongo</li>
+                      </ul>
+                      <li>D3.js pour la visualisation de données générée</li>
+                      <li>Bootstrap pour le style des pages html</li>
+                    </ul>
+                       
+                </div>
+              </div>
+            </div>
+            <div id="nconf"></div>
+    </section>
+    
+    <footer></footer>
+
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://d3js.org/d3.v5.js"></script>
+
+        <script>
+      
+        </script>
+
+
+  </body>
+</html>

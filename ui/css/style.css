@@ -1,0 +1,50 @@
+
+.main-content{
+    display: flex;
+    flex-direction: row;
+    align-items: space-between;
+  }
+  
+  
+  #d3-content{
+    max-width: 100%;
+    align-self: flex-end;
+    margin-left: 70px;
+  }
+  
+  .entete{
+    background: #7aff7a;
+    font-size: 20px;
+  }
+
+  .navbar-nav.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+}
+
+#pagination-content{
+  margin-left: 135px;
+}
+
+#content .row{
+  margin-left: 45px;
+}
+
+.panel-body {
+  margin-left: -60px;
+}
+
+.count{
+  text-align: right;
+  float: right;
+  background-color: #00933C;
+  text-align: right;
+  color: whitesmoke;
+  font-size: small;
+}
+
+
+
+
+  
