@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Application de visulisation de données</title>
+    <link rel="stylesheet" href="css/style.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <style>
+      .plateformCount{
+              float: right;
+              background-color: #0f0093;
+              text-align: right;
+              color: whitesmoke;
+              font-size: small;
+          }
+          .plateformID{
+              height: 1.1em;
+              display: table;
+              width: 400px;
+          }
+          .plateform{
+              font-size: small;
+              display: table-cell;
+          }
+  </style>
+  </head>
+  <body>
+    <header>
+        <nav class="navbar entete">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Zoom sur vos jeux vidéos préférés !</a>
+                </div>
+                <ul id="menu" class="nav navbar-nav navbar-center"></ul>
+            </div>
+        </nav>
+    </header>
+
+    <section id="content" class="container">
+         <!--Menu-->
+         <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="jeux.html">Jeux</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="editeurs.html">Editeurs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="plateformes.html">Plateformes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="years.html">Histogramme</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="model.html">Modèle Lexico-graphique</a>
+            </li>
+          </ul>
+          <!---->
+
+          <p>
+            Sur cette page, on peut observer un nuage de mots mettant en valeur les plateformes de jeux les plus appréciées.
+            Il s'agit d'un nuage lexico-graphique où plus une plateforme est apprécié par les joueurs, plus sa taille dans le nuage
+            est important. <br>
+             Un mécanisme de rotation de 45° a été mis en place, afin que la disposition des mots change à chaque fois que la
+            page est actualisé. Ce qui a pour but d'ajouter du dynamisme à la page.
+        </p>
+
+        <div class="row" id="d3-content">
+            
+            <div class="row well">
+        
+                <div id="chart" style="float:clear">
+
+                </div>
+
+            </div>
+        </div>
+        
+        <div id="nconf"></div>
+        <footer></footer>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
+
+    <script>
+
+let plateforms;
+
+        
+// Draw function
+function drawPlateforms(root) {
+    //console.log(root.data.publishers)
+    plateforms = root.data.plateforms
+
+width = 1000
+height = 650
+fontFamily = "Open Sans"
+fontScale = d3.scaleLinear().range([20, 120])// Construction d'une échelle linéaire continue qui va d'une font de 20px à 120px
+fillScale = d3.scaleOrdinal(d3.schemeCategory10) // Construction d'une échelle discrète composée de 10 couleurs différentes
+
+
+// Calcul du domain d'entrée de notre fontScale
+// L'objectif est que la plus petite occurence d'un mot soit associée à une font de 20px
+// La plus grande occurence d'un mot est associée à une font de 120px
+let minSize = d3.min(plateforms, d => d.count);
+let maxSize = d3.max(plateforms, d => d.count);
+
+// Nous projettons le domaine [plus_petite_occurence, plus_grande_occurence] vers le range [20, 120]
+// Ainsi les mots les moins fréquents seront plus petits et les plus fréquents plus grands
+fontScale.domain([minSize, maxSize]);
+
+d3.layout.cloud()
+.size([width, height])
+.words(plateforms)
+.padding(1)
+.rotate(function() {
+    return ~~(Math.random() * 2) * 45;
+})
+.spiral("rectangular")
+.font(fontFamily)
+.fontSize(d => fontScale(d.count))
+.on("end", draw)
+.start();
+
+// La méthode draw sera définie ici
+function draw() {
+d3.select("#chart").append("svg") // Ajout d'un élément SVG sur un DIV existant de la page
+.attr("class", "svg")
+.attr("width", width-10)
+.attr("height", height-10)
+.append("g") // Ajout du groupe qui contiendra tout les mots
+    .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")") // Centrage du groupe
+    .selectAll("text")
+    .data(plateforms)
+    .enter().append("text") // Ajout de chaque mot avec ses propriétés
+        .style("font-size", d => d.count/8 + "px")
+        .style("font-family", fontFamily)
+        .style("fill", d => fillScale(d.count))
+        .attr("text-anchor", "middle")
+        .attr("transform", d => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")")
+        .text(d => d.plateform);
+}
+
+}
+
+        d3.json("http://127.0.0.1:4000/?query={plateforms{plateform count}}").then(drawPlateforms)
+
+      
+        </script>
+
+
+  </body>
+</html>

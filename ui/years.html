@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Application de visulisation de données</title>
+    <link rel="stylesheet" href="css/style.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <style>
+      .plateformCount{
+              float: right;
+              background-color: #0f0093;
+              text-align: right;
+              color: whitesmoke;
+              font-size: small;
+          }
+          .plateformID{
+              height: 1.1em;
+              display: table;
+              width: 400px;
+          }
+          .plateform{
+              font-size: small;
+              display: table-cell;
+          }
+  </style>
+  </head>
+  <body>
+    <header>
+        <nav class="navbar entete">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Zoom sur vos jeux vidéos préférés !</a>
+                </div>
+                <ul id="menu" class="nav navbar-nav navbar-center"></ul>
+            </div>
+        </nav>
+    </header>
+
+    <section id="content" class="container">
+         <!--Menu-->
+         <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="jeux.html">Jeux</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="editeurs.html">Editeurs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="plateformes.html">Plateformes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="years.html">Histogramme</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="model.html">Modèle Lexico-graphique</a>
+            </li>
+          </ul>
+          <!---->
+
+          <p>
+            Ci-dessous, on peut voire un histogramme en barres horizontales des effectifs de la variable Year de notre base de données.
+            Elle représente l'évolution de la publication des jeux entre l'année 2000 et l'année 2020.
+            Chaque barre horizontale de l'histogramme ainsi proposé à une 
+            largeur relatif au nombre de jeux publiés durant l'année en ordonnée de la barre.
+        </p>
+
+        <div class="row" id="d3-content">
+            <div class="row well">
+                <h3>Histogramme des effectifs de la variable Year</h3>
+        
+                <div id="chart" style="float:clear"></div>
+
+            </div>
+        </div>
+        
+        <div id="nconf"></div>
+        <footer></footer>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v5.js"></script>
+
+    <script>
+       let years;
+        // margins, view size, chart size
+var m = {top: 60, right: 20, bottom: 20, left: 90};
+var w_view = 850;
+var h_view = 650;
+var w_chart  = w_view - m.left - m.right;
+var h_chart = h_view - m.top - m.bottom;
+
+// blank svg
+var svg = d3.select("#chart")
+            .append("svg")
+            .attr("class", "svg")
+            .attr("width", w_view)
+            .attr("height", h_view);
+
+// rectangular border around bar chart
+svg.append("g")
+   .append("rect")
+   .attr("width", w_view)
+   .attr("height", h_view)
+   .style("stroke", "black")
+   .style("fill", "none");
+
+// x axis label
+svg.append("g")
+   .append("text")
+   .attr("class", "label-axis")
+   .attr("transform", "rotate(-90)")
+   .attr("x", -h_chart/2 -m.top)
+   .attr("y", 20)
+   .text("Années : 2000 - 2020")
+   .style("text-anchor", "middle");
+
+// y axis label
+svg.append("g")
+   .append("text")
+   .attr("class", "label-axis")
+   .attr("x", w_chart/2 + m.left)
+   .attr("y", 20)
+   .text("Nombre de jeux publiés")
+   .style("text-anchor", "middle");
+
+// x and y ranges
+var y = d3.scaleBand()
+          .range([h_chart + m.top, m.top])
+          .padding(0.2);       // space between bars
+
+var x = d3.scaleLinear()
+          .range([m.left, w_chart + m.left]);
+
+//bar color
+function barColorGreen(d) {
+  return "rgb(0," + ((d.count%255)+50) +",215)";
+}
+function drawHistogramme(root) {
+    years = root.data.years;
+    console.log(years)
+
+
+        years.sort( (a, b) => a.count - b.count );
+
+        // x and y axes
+        y.domain( years.map(d => d.year) )
+        x.domain( [0, d3.max(years, d => +d.count)] );
+
+        // bars
+        svg.append("g")
+           .selectAll("rect")
+           .data(years)
+           .join("rect")
+           .attr("y", d => y(d.year))
+           .attr("x", m.left)
+           .attr("height",  y.bandwidth())
+           .attr("width", d => x(d.count) - m.left)
+           .style("fill", barColorGreen);
+
+       // x and y axes
+       svg.append("g")
+          .attr("class", "axis")
+          .attr("transform", "translate(0,"+ m.top +")")
+          .call(d3.axisTop(x));
+
+      svg.append("g")
+         .attr("class", "axis")
+         .attr("transform", "translate("+ m.left +",0)")
+         .call(d3.axisLeft(y));
+
+       // y values at the top of the bars
+       svg.append("g")
+          .selectAll("text")
+          .data(years)
+          .join("text")
+          .attr("class", "label-bar")
+          .attr("y", d => y(d.year))
+          .attr("x", d => x(d.count))
+          .attr("dx", -25)
+          .attr("dy", 23)
+          .text(d => d.count);
+    
+}
+
+        d3.json("http://127.0.0.1:4000/?query={years{year count}}").then(drawHistogramme) 
+      
+    </script>
+
+
+  </body>
+</html>
